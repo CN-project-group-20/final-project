@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 public class BitField {
 	public static int byteSize = 8;
-	public static byte maxByte = -1; //11111111
+	public static byte maxByte = -1; //11111111     
 	public static byte minByte = 0; //00000000
 
 	public byte[] arrayBitfield;
@@ -82,6 +82,7 @@ public class BitField {
 			}
 		}
 		if(arrayRequest.size()==0)
+			System.out.println("The BitField/pieceRandomRequest/arrayRequest.size = 0");
 			return -1;
 		int randomIndex=(int)(Math.random()*arrayRequest.size());
 		return arrayRequest.get(randomIndex);

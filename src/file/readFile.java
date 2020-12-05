@@ -83,47 +83,59 @@ public class readFile
 		pieceInfoList.add(piTail);
 	}
 	
-	public int insertPiece(int pieceIndex, byte[] bytes) throws IOException
+	public int insertPiece(int insertPieceIndex, byte[] insertedPiece) throws IOException
 	{
-		pieceInfo pi = new pieceInfo(pieceIndex, bytes.length);
-		int newpiecelength = newPiece(pi);
-		if(newpiecelength==-1)
-			return newpiecelength;//the -1 aims to rec again.
-		File file = new File(filePath);//volatile
-		if(file.exists() && file.isFile())
+		/* Sun: @12月5日 19：53 
+		 * change all of the implemnet of insertPiece
+		 * */
+		int insertPosition = 0;
+		int insertIndex = 0;
+		for(i=0;i<pieceInfoList.size();i++)
 		{
-			FileInputStream in = new FileInputStream(filePath);
-			BufferedInputStream br = new BufferedInputStream(in);
-			byte[] byteOfFile = new byte[(int)file.length()];
-			br.read(byteOfFile);
-			br.close();
+			if(pieceInfoList.get(i).pieceIndex<insertPieceIndex)
+			{
+				insertPosition = insertPosition + pieceInfoList.get(i).pieceLength;
+				insertIndex++;
+			}
+			else if(pieceInfoList.get(i).pieceIndex==insertPieceIndex) 
+			{
+				System.out.println("This piece has already been inserted before.");
+			}
+			else 
+			{
+				System.out.println("The insert piece's index has some wrongs.");
+				break;
+			}
 		}
-		
-		//need to be implement
-		return 0;//here is not right 
-		
+		pieceInfo temppi = new pieceInfo(insertPieceIndex, insertedPiece.length);
+		synchronized(pieceInfoList)
+		{
+			
+			pieceInfoList.add(insertIndex, temppi);
+		}
+		/* Then insert the insertedPiece after finding the insertPosition */
+		File file = new File(filePath);
+		if(!file.exists())
+		{
+			file.createNewFile();
+			FileOutputStream fileOutputStream = new FileOutputStream(filePath);
+			BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(fileOutputStream);
+			bufferedOutputStream.write(bytesInserted);
+			bufferedOutputStream.close();
+		}
+		else
+		{
+			FileInputStream fis = new FileInputStream(file);
+			BufferedInputStream bis = new BufferedInputStream(fis);
+			byte[] byteStream = new byte[(int)file.length()];
+			bis.read(byteStream, 0, byteStream.length);
+			bis.close();
+		}
 	}
 	
 	public byte[] getPiece(int pieceIndex) throws IOException
-	{//感觉这里写错了
-		int a = 0;
-		for (pieceInfo peer: pieceInfoList)
-		{
-			if(peer.pieceIndex ==pieceIndex)
-			{
-				byte[] piece = null;
-				File file = new File(filePath);
-				FileInputStream in = new FileInputStream(filePath);
-				BufferedInputStream  br  = new BufferedInputStream (in);
-				byte[] byteOfFile = new byte[(int)file.length()];
-				br.read(byteOfFile);
-				br.close();
-				piece = Arrays.copyOfRange(byteOfFile, a, a + peer.pieceLength);
-				return piece;
-			}
-			a = a + peer.pieceLength;
-		}
-		return null;
+	{
+		
 	}
 
 	

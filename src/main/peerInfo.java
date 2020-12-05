@@ -17,7 +17,8 @@ public class peerInfo
 	public volatile BitField bitField; // need help from BitField
 	public int sequence; // aims to track peerid
 	
-	
+
+
 	public void setBitField(BitField bitField) {
 		synchronized(this.bitField) {
 			this.bitField = bitField;
@@ -29,6 +30,14 @@ public class peerInfo
 			//this.bitField.updateBitField(pieceIndex);
 		}
 	}
+	
+	
+	
+	
+	
+	
+	
+	
 	
 	public String toString() {
 		String peerInfoString = "peerID = " + peerId + "\n"
