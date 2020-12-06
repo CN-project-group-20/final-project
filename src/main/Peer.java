@@ -21,6 +21,7 @@ public class Peer {
 	volatile readConfig config;
 	volatile readFile readFile;
 	volatile TranState peerState;
+	volatile UnChokedNB unchoked_NB;
 	
 	volatile List<Link> linkList;
 	volatile Map<Integer, Integer> downloadMap;
@@ -31,12 +32,15 @@ public class Peer {
 	
 	public Peer(int peerNumber) throws IOException {
 		init(peerNumber);
+		
 	}
 	
 	public void init(int peerNumber) throws UnknownHostException, IOException {
 		config = new readConfig();
 		config.readpeerInfo(peerNumber);
 		info = config.myInfo;
+		peerState = new TranState(info);
+		unchoked_NB = new UnChokedNB();
 		
 	    linkList = new ArrayList<Link>();
 	    downloadMap = new HashMap<Integer, Integer>();
