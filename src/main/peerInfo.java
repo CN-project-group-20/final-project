@@ -1,10 +1,8 @@
 package main;
 
 import java.util.*;
-
-import message.BitField;
-
 import java.io.*;
+import message.BitField;
 
 public class peerInfo 
 {
@@ -17,7 +15,13 @@ public class peerInfo
 	public volatile BitField bitField; // need help from BitField
 	public int sequence; // aims to track peerid
 	
-
+	public boolean initBefore(peerInfo server)
+	{
+		if(sequence < server.sequence)
+			return true;
+		else
+			return false;
+	}
 
 	public void setBitField(BitField bitField) {
 		synchronized(this.bitField) {
@@ -27,10 +31,32 @@ public class peerInfo
 	
 	public void updateBitField(int pieceIndex) {
 		synchronized(this.bitField) {
-			//this.bitField.updateBitField(pieceIndex);
+			this.bitField.pieceUpdate(pieceIndex);
 		}
 	}
 	
+	public boolean checkInterested(peerInfo server)
+	{
+		boolean interested;
+		synchronized(bitField)
+		{
+			interested = bitField.checkInterested(server.bitField);
+		}
+		return interested;
+	}
+	
+	public boolean checkInterested(peerInfo server, Set<Integer> x)
+	{//need to be discussed.
+		boolean interested;
+		synchronized(bitField)
+		{
+			interested = bitField.checkInterested(server.bitField, x);
+		}
+		return interested;
+	}
+	
+	@Override
+
 	
 	
 	

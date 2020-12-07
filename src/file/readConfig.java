@@ -64,7 +64,7 @@ public class readConfig
 	
 	public void readpeerInfo(int peerNumber) throws IOException
 	{//read peerInfo.cfg
-		FileReader fr = new FileReader("peerInfo.cfg");
+		FileReader fr = new FileReader("PeerInfo.cfg");
 		BufferedReader br = new BufferedReader(fr);
 		String line = "";
 		String[] arrs = null;

@@ -71,6 +71,16 @@ public class BitField {
 		return true;
 	}
 	
+	public boolean checkIfInterested(BitField serverBitField, Set<Integer> inFlightSet) {
+		String clientBitString = this.toString();
+		String serverBitString = serverBitField.toString();
+		for(int i=0; i<clientBitString.length(); i++) {
+			if(clientBitString.charAt(i) == '0' && serverBitString.charAt(i) == '1' && !inFlightSet.contains(i))
+				return true;
+		}
+		return false;
+	}
+	
 	public int pieceRandomRequest(BitField serverBitField) {
 		ArrayList<Integer> arrayRequest= new ArrayList<>();
 		for(int i=0; i<arrayBitfield.length; i++) {
@@ -137,4 +147,12 @@ public class BitField {
         	re = Integer.parseInt(bit, 2) - 256;  
         return (byte) re;  
     }
+	
+	@Override
+	public String toString() {
+		String bitFieldString = new String();
+		for(byte b : bitFieldArray)
+			bitFieldString += byteToString(b);
+		return bitFieldString;
+	}
 }

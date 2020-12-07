@@ -53,7 +53,7 @@ public class readFile
 	
 	
 	
-	public readFile(String FilePath, int ownThisFile)
+	public readFile(String FilePath, int ownThisFile) 
 	{
 		
 		filePath = FilePath;
@@ -118,10 +118,21 @@ public class readFile
 		if(!file.exists())
 		{
 			file.createNewFile();
-			FileOutputStream fileOutputStream = new FileOutputStream(filePath);
-			BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(fileOutputStream);
-			bufferedOutputStream.write(bytesInserted);
-			bufferedOutputStream.close();
+			FileOutputStream fos = new FileOutputStream(filePath);
+			BufferedOutputStream bos = new BufferedOutputStream(fos);
+			bos.write(bytesInserted);
+			bos.close();
+			//
+			byte[] afterInsert = insertByteArray(byteStream, insertedPiece, insertPosition);
+			if(afterInsert == null) {
+				return -1;
+			}
+			
+			//Write the String back to the file
+			FileOutputStream fos = new FileOutputStream(filePath);
+			BufferedOutputStream bos = new BufferedOutputStream(fos);
+			bos.write(afterInsert);
+			bos.close();
 		}
 		else
 		{
@@ -131,11 +142,53 @@ public class readFile
 			bis.read(byteStream, 0, byteStream.length);
 			bis.close();
 		}
+		return insertPieceIndex;
+	}
+	
+	private byte[] insertByteArray(byte[] oldBytes, byte[] insertedBytes, int insertPosition) 
+	{/* Sun: @12月6日 19：31 
+		 * 
+		 * */
+		if(insertPosition > oldBytes.length)
+		{
+			System.out.println("The insert position beyond the max length of the old bytes--readFile.java");
+			return null;
+		}
+			
+		byte[] afterInsert = new byte[oldBytes.length + insertedBytes.length];
+		System.arraycopy(oldBytes, 0, afterInsert, 0, insertPosition);//put old bytes into afterbytes without any changes.
+		System.arraycopy(insertedBytes, 0, afterInsert, insertPosition, insertedBytes.length);//put the bytes which need to be inserted into afterbytes.
+		System.arraycopy(oldBytes, insertPosition, afterInsert, insertPosition + insertedBytes.length, oldBytes.length - insertPosition);//insert the remnant bytes after the insetedBytes.
+		return afterInsert;
 	}
 	
 	public byte[] getPiece(int pieceIndex) throws IOException
-	{
-		
+	{/* Sun: @12月6日 19：31 
+		 * 
+		 * */
+		int offset = 0;
+		for(pieceInfo pi : pieceInfoList) {
+			if(pi.pieceIndex == pieceIndex) {
+				return getPiece(offset, pi.length);
+			}
+			offset += pi.length;
+		}
+		return null;
+	}
+	
+	private byte[] getPiece(int offset, int length) throws IOException
+	{/* Sun: @12月6日 19：31 
+		 * 
+		 * */
+		byte[] piece = null;
+		File file = new File(filePath);
+		FileInputStream fis = new FileInputStream(filePath);
+		BufferedInputStream  bis  = new BufferedInputStream (fis);
+		byte[] byteStream = new byte[(int)file.length()];
+		bis.read(byteStream);
+		bis.close();
+		piece = Arrays.copyOfRange(byteStream, offset, offset + length);
+		return piece;
 	}
 
 	
